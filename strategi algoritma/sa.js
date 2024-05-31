@@ -22,6 +22,15 @@ const tariffs = {
     E: { A: 3000, B: 3000, C: 4000, D: 3000 }
 };
 
+// Adjacency matrix
+const adjacencyMatrix = {
+    A: { B: true, C: true, D: true, E: true },
+    B: { A: true, C: true, D: true, E: true },
+    C: { A: true, B: true, D: true, E: true },
+    D: { A: true, B: true, C: true, E: true },
+    E: { A: true, B: true, C: true, D: true }
+};
+
 const canvas = document.getElementById('graphCanvas');
 const ctx = canvas.getContext('2d');
 
@@ -37,7 +46,7 @@ function drawGraph() {
             ctx.stroke();
             const midX = (cities[city1].x + cities[city2].x) / 2;
             const midY = (cities[city1].y + cities[city2].y) / 2;
-            ctx.fillText(`${distances[city1][city2]} (${tariffs[city1][city2]})`, midX, midY);
+            ctx.fillText(${distances[city1][city2]} (${tariffs[city1][city2]}), midX, midY);
         });
     });
 
@@ -61,7 +70,7 @@ function findRoute() {
 
     let routes;
     if (searchMethod === 'greedy') {
-        routes = [findGreedyRoute(startCity, endCity, maxTarif)];
+        routes = [findGreedyRoute(startCity, endCity)];
     } else {
         routes = findBruteForceRoutes(startCity, endCity, maxTarif);
     }
@@ -69,26 +78,49 @@ function findRoute() {
     displayRoute(routes, maxTarif);
 }
 
-function findGreedyRoute(start, end, maxTarif) {
-    const route = [start];
-    let current = start;
+function findGreedyRoute(start, end) {
+    let route = [];
     let totalTarif = 0;
-    while (current !== end) {
-        let nearest = null;
-        let minDist = Infinity;
-        Object.keys(distances[current]).forEach(city => {
-            if (!route.includes(city) && distances[current][city] < minDist && (totalTarif + tariffs[current][city]) <= maxTarif) {
-                minDist = distances[current][city];
-                nearest = city;
+    let visited = new Set();
+    let currentNode = start;
+
+    while (currentNode !== end) {
+        route.push(currentNode);
+        visited.add(currentNode);
+
+        let nearestNeighbor = null;
+        let shortestDistance = Infinity;
+        let currentTariff = 0;
+
+        // Check if there is a direct route to the end
+        if (distances[currentNode][end] !== undefined) {
+            nearestNeighbor = end;
+            shortestDistance = distances[currentNode][end];
+            currentTariff = tariffs[currentNode][end];
+        } else {
+            // Find the nearest neighbor among all neighbors
+            for (let neighbor in distances[currentNode]) {
+                if (!visited.has(neighbor) && distances[currentNode][neighbor] < shortestDistance) {
+                    shortestDistance = distances[currentNode][neighbor];
+                    nearestNeighbor = neighbor;
+                    currentTariff = tariffs[currentNode][neighbor];
+                }
             }
-        });
-        if (!nearest) return null; // No valid route found
-        totalTarif += tariffs[current][nearest];
-        route.push(nearest);
-        current = nearest;
+        }
+
+        if (nearestNeighbor === null) {
+            console.log("No path found!");
+            return { route: [], totalTarif: 0 };
+        }
+
+        totalTarif += currentTariff;
+        currentNode = nearestNeighbor;
     }
-    return route;
+
+    route.push(end);
+    return { route, totalTarif };
 }
+
 
 function findBruteForceRoutes(start, end, maxTarif) {
     const allRoutes = permute(Object.keys(cities));
@@ -137,11 +169,11 @@ function calculateTotalTarif(route) {
 function displayRoute(routes, maxTarif) {
     drawGraph();
     if (!routes || routes.length === 0) {
-        document.getElementById('result').textContent = `No valid route found within the maximum tariff of ${maxTarif}`;
+        document.getElementById('result').textContent = No valid route found within the maximum tariff of ${maxTarif};
         return;
     }
 
-    let resultText = `Routes within the maximum tariff of ${maxTarif}:<br>`;
+    let resultText = Routes within the maximum tariff of ${maxTarif}:<br>;
     routes.forEach(({ route, distance, totalTarif }) => {
         ctx.strokeStyle = totalTarif <= maxTarif ? 'green' : 'red';
         for (let i = 0; i < route.length - 1; i++) {
@@ -151,7 +183,7 @@ function displayRoute(routes, maxTarif) {
             ctx.stroke();
         }
         ctx.strokeStyle = 'black';
-        resultText += `Route: ${route.join(' -> ')} | Distance: ${distance} | Total Tarif: ${totalTarif}<br>`;
+        resultText += Route: ${route.join(' -> ')} | Distance: ${distance} | Total Tarif: ${totalTarif}<br>;
     });
 
     document.getElementById('result').innerHTML = resultText;

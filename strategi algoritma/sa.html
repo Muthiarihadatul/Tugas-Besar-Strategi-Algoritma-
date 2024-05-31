@@ -1,47 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Graph Visualization</title>
-    <link rel="stylesheet" href="sa.css">
+    <title>Graph Route Finder</title>
+    <link rel="stylesheet" type="text/css" href="sa.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Graph Visualization with Route Search</h1>
-        <div class="controls">
-            <label for="startCity">Start City:</label>
-            <select id="startCity">
-                <option value="A">A</option>
-                <option value="B">B</option>
-                <option value="C">C</option>
-                <option value="D">D</option>
-                <option value="E">E</option>
-            </select>
-
-            <label for="endCity">End City:</label>
-            <select id="endCity">
-                <option value="A">A</option>
-                <option value="B">B</option>
-                <option value="C">C</option>
-                <option value="D">D</option>
-                <option value="E">E</option>
-            </select>
-
-            <label for="searchMethod">Search Method:</label>
-            <select id="searchMethod">
-                <option value="greedy">Greedy</option>
-                <option value="bruteforce">Brute Force</option>
-            </select>
-
-            <label for="tarif">Max Tarif:</label>
-            <input type="number" id="tarif" value="10000">
-
-            <button onclick="findRoute()">Find Route</button>
-        </div>
-        <canvas id="graphCanvas" width="800" height="600"></canvas>
-        <div id="result"></div>
-    </div>
+    <h1>Graph Route Finder</h1>
+    <form onsubmit="findRoute(); return false;">
+        <label for="startCity">Start City:</label>
+        <select id="startCity">
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+            <option value="D">D</option>
+            <option value="E">E</option>
+        </select>
+        <label for="endCity">End City:</label>
+        <select id="endCity">
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+            <option value="D">D</option>
+            <option value="E">E</option>
+        </select>
+        <label for="searchMethod">Search Method:</label>
+        <select id="searchMethod">
+            <option value="greedy">Greedy</option>
+            <option value="bruteForce">Brute Force</option>
+        </select>
+        <label for="tarif">Max Tarif:</label>
+        <input type="number" id="tarif" value="10000">
+        <button type="submit">Find Route</button>
+    </form>
+    <canvas id="graphCanvas" width="800" height="600"></canvas>
+    <div id="result"></div>
     <script src="sa.js"></script>
 </body>
 </html>
